@@ -4,52 +4,26 @@ namespace GildedRose
 {
     public class Program
     {
-        public IList<Item> Items { get; set; }
+        public List<IUpdate> Items { get; set; }
 
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             System.Console.WriteLine("OMGHAI!");
 
             var app = new Program()
-            {
-                Items = new List<Item>
-                                          {
-                                              new Item {Name = "+5 Dexterity Vest", SellIn = 10, Quality = 20},
-                                              new Item {Name = "Aged Brie", SellIn = 2, Quality = 0},
-                                              new Item {Name = "Elixir of the Mongoose", SellIn = 5, Quality = 7},
-                                              new Item {Name = "Sulfuras, Hand of Ragnaros", SellIn = 0, Quality = 80},
-                                              new Item {Name = "Sulfuras, Hand of Ragnaros", SellIn = -1, Quality = 80},
-                                              new Item
-                                                  {
-                                                      Name = "Backstage passes to a TAFKAL80ETC concert",
-                                                      SellIn = 15,
-                                                      Quality = 20
-                                                  },
-                                              new Item
-                                                  {
-                                                      Name = "Backstage passes to a TAFKAL80ETC concert",
-                                                      SellIn = 10,
-                                                      Quality = 49
-                                                  },
-                                              new Item
-                                                  {
-                                                      Name = "Backstage passes to a TAFKAL80ETC concert",
-                                                      SellIn = 5,
-                                                      Quality = 49
-                                                  },
-                                              // this conjured item does not work properly yet
-                                              new Item {Name = "Conjured Mana Cake", SellIn = 3, Quality = 6}
-                                          }
+                {
+                    Items = GetInitialItems()
+                };
 
-            };
-
+            string printFormat = "{0}\t\t\t\t{1}\t\t{2}";
             for (var i = 0; i < 31; i++)
             {
                 System.Console.WriteLine("-------- day " + i + " --------");
-                System.Console.WriteLine("name, sellIn, quality");
+                System.Console.WriteLine(printFormat,"name","sellIn","tquality");
                 for (var j = 0; j < app.Items.Count; j++)
                 {
-                    System.Console.WriteLine(app.Items[j].Name + ", " + app.Items[j].SellIn + ", " + app.Items[j].Quality);
+                    Item item = (Item) app.Items[j];
+                    System.Console.WriteLine(printFormat,item.Name , item.SellIn, item.Quality);
                 }
                 System.Console.WriteLine("");
                 app.UpdateQuality();
@@ -58,84 +32,41 @@ namespace GildedRose
 
         }
 
+        private static List<IUpdate> GetInitialItems()
+            {
+                return new List<IUpdate>
+                    {
+                        new Normal() {Name = "+5 Dexterity Vest", SellIn = 10, Quality = 20},
+                        new Brie() {Name = "Aged Brie", SellIn = 2, Quality = 0},
+                        new Normal() {Name = "Elixir of the Mongoose", SellIn = 5, Quality = 7},
+                        new Legendary() {Name = "Sulfuras, Hand of Ragnaros"},
+                        new Legendary() {Name = "Sulfuras, Hand of Ragnaros"},
+                        new BackStage()
+                            {
+                                Name = "Backstage passes to a TAFKAL80ETC concert",
+                                SellIn = 15,
+                                Quality = 20
+                            },
+                        new BackStage()
+                            {
+                                Name = "Backstage passes to a TAFKAL80ETC concert",
+                                SellIn = 10,
+                                Quality = 49
+                            },
+                        new BackStage()
+                            {
+                                Name = "Backstage passes to a TAFKAL80ETC concert",
+                                SellIn = 5,
+                                Quality = 49
+                            },
+                        // this conjured item does not work properly yet
+                        new Conjured() {Name = "Conjured Mana Cake", SellIn = 3, Quality = 6}
+                    };
+            }
+                //Updates quality for all items
         public void UpdateQuality()
         {
-            for (var i = 0; i < Items.Count; i++)
-            {
-                if (Items[i].Name != "Aged Brie" && Items[i].Name != "Backstage passes to a TAFKAL80ETC concert")
-                {
-                    if (Items[i].Quality > 0)
-                    {
-                        if (Items[i].Name != "Sulfuras, Hand of Ragnaros")
-                        {
-                            Items[i].Quality = Items[i].Quality - 1;
-                        }
-                    }
-                }
-                else
-                {
-                    if (Items[i].Quality < 50)
-                    {
-                        Items[i].Quality = Items[i].Quality + 1;
-
-                        if (Items[i].Name == "Backstage passes to a TAFKAL80ETC concert")
-                        {
-                            if (Items[i].SellIn < 11)
-                            {
-                                if (Items[i].Quality < 50)
-                                {
-                                    Items[i].Quality = Items[i].Quality + 1;
-                                }
-                            }
-
-                            if (Items[i].SellIn < 6)
-                            {
-                                if (Items[i].Quality < 50)
-                                {
-                                    Items[i].Quality = Items[i].Quality + 1;
-                                }
-                            }
-                        }
-                    }
-                }
-
-                if (Items[i].Name != "Sulfuras, Hand of Ragnaros")
-                {
-                    Items[i].SellIn = Items[i].SellIn - 1;
-                }
-
-                if (Items[i].SellIn < 0)
-                {
-                    if (Items[i].Name != "Aged Brie")
-                    {
-                        if (Items[i].Name != "Backstage passes to a TAFKAL80ETC concert")
-                        {
-                            if (Items[i].Quality > 0)
-                            {
-                                if (Items[i].Name != "Sulfuras, Hand of Ragnaros")
-                                {
-                                    Items[i].Quality = Items[i].Quality - 1;
-                                }
-                            }
-                        }
-                        else
-                        {
-                            Items[i].Quality = Items[i].Quality - Items[i].Quality;
-                        }
-                    }
-                    else
-                    {
-                        if (Items[i].Quality < 50)
-                        {
-                            Items[i].Quality = Items[i].Quality + 1;
-                        }
-                    }
-                }
-            }
+            foreach (IUpdate upd in Items) upd.Update();
         }
-
     }
-
-    
-
 }

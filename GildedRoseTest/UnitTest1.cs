@@ -12,24 +12,33 @@ namespace GildedRoseTest
     public class GildedRoseUnitTest
     {
 
-        [TestMethod]
+        public List<IUpdate> GetArray(IUpdate item)
+        {
+            return new List<IUpdate>(){item};
+        }
+
+        public Program GetApp(List<IUpdate> items)
+        {
+            return new Program() {Items = items};
+        }
+            
+            [TestMethod]
         public void TestItemNeverNegative()
         {
-            List<Item> Items = new List<Item>{ 
-                new Item{Name    = "foo", 
+            var Items = 
+                new Normal(){Name    = "foo", 
                          SellIn  = 0, 
-                         Quality = 0} 
-            };
-            Program app = new Program { Items = Items };
+                         Quality = 0} ;
+            var app = GetApp(GetArray(Items));
             app.UpdateQuality();
-            Assert.IsTrue(Items.First().Quality >= 0);
+            Assert.IsTrue(Items.Quality >= 0);
         }
 
         [TestMethod]
         public void TestSellInDecreases()
         {
-            var item = new Item() { Name = "Crap", SellIn = 1, Quality = 10 };
-            var app = new Program() { Items = new List<Item>() { item } };
+            var item = new Normal() { Name = "Crap", SellIn = 1, Quality = 10 };
+            var app = GetApp(GetArray(item));
             app.UpdateQuality();
             Assert.AreEqual(0, item.SellIn);
         }
@@ -37,8 +46,8 @@ namespace GildedRoseTest
         [TestMethod]
         public void TestDoubleDegradeAfterSellByDate()
         {
-            var item = new Item() { Name = "Crap", SellIn = 0, Quality = 10 };
-            var app = new Program() { Items = new List<Item>() { item } };
+            var item = new Normal() { Name = "Crap", SellIn = 0, Quality = 10 };
+            var app = GetApp(GetArray(item));
             app.UpdateQuality();
             Assert.AreEqual(8, item.Quality);
         }
@@ -47,29 +56,20 @@ namespace GildedRoseTest
         public void TestAgedBrieAllwaysIncreseInValue()
         {
             int updateCount = 50;
-            var item = new Item { Name = "Aged Brie", SellIn = 2, Quality = 0 };
-            var app = new Program() { Items = new List<Item>() { item } };
+            var item = new Brie() { Name = "Aged Brie", SellIn = 2, Quality = 0 };
+            var app = GetApp(GetArray(item));
             for (int i = 0; i < updateCount; i++)
                 app.UpdateQuality();
 
             Assert.AreEqual(updateCount, item.Quality);
         }
 
-        [TestMethod]
-        public void TestMaxQualityValue()
-        {
-            var item = new Item() { Name = "test", Quality = 200, SellIn = 1 };
-            var app = new Program() { Items = new List<Item>() { item } };
-            app.UpdateQuality();
-
-            Assert.AreEqual(50, item.Quality);
-        }
 
         [TestMethod]
         public void TestLegendaryItemsSellDateDoesNotChange()
         {
-            var item = new Item { Name = "Sulfuras, Hand of Ragnaros", SellIn = 20, Quality = 80 };
-            var app = new Program() { Items = new List<Item>() { item } };
+            var item = new Legendary() { Name = "Sulfuras, Hand of Ragnaros", SellIn = 20, Quality = 80 };
+            var app = GetApp(GetArray(item));
             //for (int i = 0; i < 200; i++)
             //  app.UpdateQuality();
 
@@ -79,9 +79,9 @@ namespace GildedRoseTest
         [TestMethod]
         public void TestLegendaryQualityDoesNotChange()
         {
-            var item = new Item { Name = "Sulfuras, Hand of Ragnaros", SellIn = 20, Quality = 80 };
+            var item = new Legendary() { Name = "Sulfuras, Hand of Ragnaros", SellIn = 20, Quality = 80 };
 
-            var app = new Program() { Items = new List<Item>() { item } };
+            var app = GetApp(GetArray(item));
 
             for (int i = 0; i < 200; i++)
                 app.UpdateQuality();
@@ -92,13 +92,13 @@ namespace GildedRoseTest
         [TestMethod]
         public void TestBackStagePassesIncreaseByTwiceTheQuality10DaysOrLess()
         {
-            var item = new Item()
+            var item = new BackStage()
                 {
                     Name = "Backstage passes to a TAFKAL80ETC concert",
                     SellIn = 9,
                     Quality = 43
                 };
-            var app = new Program() {Items = new List<Item>() {item}};
+            var app = GetApp(GetArray(item));
             app.UpdateQuality();
             Assert.AreEqual(45,item.Quality);
         }
@@ -106,13 +106,13 @@ namespace GildedRoseTest
         [TestMethod]
         public void TestBackStagePassesIncreaseByThriceTheQuality5DaysOrLess()
         {
-            var item = new Item()
+            var item = new BackStage()
             {
                 Name = "Backstage passes to a TAFKAL80ETC concert",
                 SellIn = 5,
                 Quality = 30
             };
-            var app = new Program() { Items = new List<Item>() { item } };
+            var app = GetApp(GetArray(item));
             app.UpdateQuality();
             Assert.AreEqual(33, item.Quality);
         }
@@ -120,13 +120,13 @@ namespace GildedRoseTest
         [TestMethod]
         public void TestBackStageNeverIncreasesAboveMaxValueForQuality()
         {
-            var item = new Item()
+            var item = new BackStage()
             {
                 Name = "Backstage passes to a TAFKAL80ETC concert",
                 SellIn = 100,
                 Quality = 48
             };
-            var app = new Program() { Items = new List<Item>() { item } };
+            var app = GetApp(GetArray(item));
             for (int i = 0; i < 100;i++ )
                 app.UpdateQuality();
             Assert.AreEqual(50, item.Quality);
@@ -135,13 +135,13 @@ namespace GildedRoseTest
         [TestMethod]
         public void TestBackStageQualityIsZeroAfterConcert()
         {
-            var item = new Item()
+            var item = new BackStage()
             {
                 Name = "Backstage passes to a TAFKAL80ETC concert",
                 SellIn = 0,
                 Quality = 50
             };
-            var app = new Program() { Items = new List<Item>() { item } };
+            var app = GetApp(GetArray(item));
             app.UpdateQuality();
             Assert.AreEqual(0, item.Quality);
         }
@@ -149,9 +149,9 @@ namespace GildedRoseTest
         [TestMethod]
         public void TestConjuredItemsDegradeTwiceAsFast()
         {
-            var item = new Item {Name = "Conjured Mana Cake", SellIn = 3, Quality = 6};
+            var item = new Conjured() {Name = "Conjured Mana Cake", SellIn = 3, Quality = 6};
 
-            var app = new Program() {Items = new List<Item>() {item}};
+            var app = GetApp(GetArray(item));
             app.UpdateQuality();
             Assert.AreEqual(4,item.Quality);
         }

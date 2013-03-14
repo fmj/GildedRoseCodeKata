@@ -7,9 +7,11 @@ namespace GildedRose
 {
     public class Item
     {
+        private int _quality = 0;
+
         public Item()
         {
-            Category = CategoryEnum.Normal;
+
         }
         public string Name { get; set; }
 
@@ -17,27 +19,6 @@ namespace GildedRose
 
         public int Quality { get; set; }
 
-        public CategoryEnum Category { get; set; }
 
-        public void Update()
-        {
-            switch (Category)
-            {
-                case CategoryEnum.Backstage:
-                    {
-                        if (SellIn == 0)
-                            Quality = 0;
-                        else
-                        {
-                            
-                        }
-                    }
-            }
-        }
-    }
-
-    public enum CategoryEnum
-    {
-        Backstage, Conjured, Brie, Legendary, Normal
     }
 }
