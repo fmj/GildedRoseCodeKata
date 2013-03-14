@@ -5,6 +5,7 @@ using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using GildedRose;
+using GildedRose.Classes;
 
 namespace GildedRoseTest
 {

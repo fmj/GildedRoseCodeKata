@@ -49,6 +49,10 @@
     <Compile Include="UnitTest1.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\GildedRose.Classes\GildedRose.Classes.csproj">
+      <Project>{D995BBE9-5585-40A2-BADB-BA0E7FD06FF5}</Project>
+      <Name>GildedRose.Classes</Name>
+    </ProjectReference>
     <ProjectReference Include="..\GildedRoseApp\GildedRoseApp.csproj">
       <Project>{7A2F2977-176E-4EB7-9067-FA46F8CF1421}</Project>
       <Name>GildedRoseApp</Name>

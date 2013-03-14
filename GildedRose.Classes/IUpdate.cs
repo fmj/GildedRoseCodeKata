@@ -1,4 +1,4 @@
-﻿namespace GildedRose
+﻿namespace GildedRose.Classes
 {
     public interface IUpdate
     {
